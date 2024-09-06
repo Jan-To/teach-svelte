@@ -1,12 +1,10 @@
 <script>
     import Scatterplot from "./Scatterplot.svelte";
+    import { data } from "./store";
 </script>
 
+<Scatterplot data={$data} xAttr={Object.keys($data[0])[0]} yAttr={Object.keys($data[0])[1]}/>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
-
-<Scatterplot />
 <style>
-    
+
 </style>
