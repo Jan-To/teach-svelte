@@ -19,7 +19,7 @@
 </script>
 
 <g class="axis x-axis" transform="translate(0,{yScale(yScale.domain()[0])})">
-  <line x1={xScale(xScale.domain()[0])} x2={xScale(xScale.domain()[1])}/>
+  <!-- <line x1={xScale(xScale.domain()[0])} x2={xScale(xScale.domain()[1])}/> -->
   {#each xTickValues as tick}
     <g class="tick" transform="translate({xScale(tick)},0)">
       <line y1=0 y2={(yScale.range()[1]-yScale.range()[0])}/>
@@ -30,7 +30,7 @@
 </g>
 
 <g class="axis y-axis" transform="translate({xScale(xScale.domain()[0])},0)">
-  <line y1={yScale(yScale.domain()[1])} y2={yScale(yScale.domain()[0])}/>
+  <!-- <line y1={yScale(yScale.domain()[1])} y2={yScale(yScale.domain()[0])}/> -->
   {#each yTickValues as tick}
     <g class="tick" transform="translate(0,{yScale(tick)})">
       <line x1=0 x2={(xScale.range()[1]-xScale.range()[0])}/>
@@ -58,6 +58,6 @@
   }
 
   .tick line {
-    stroke: lightgray;
+    stroke: rgb(232, 232, 232);
   }
 </style>

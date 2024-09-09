@@ -1,7 +1,6 @@
 <script>
   import Coords from "./Coords.svelte";
   import { onMount } from 'svelte';
-  import { changeData } from "./DataHandler.svelte";
   import { scaleLinear } from "d3-scale";
 
   export let data;
@@ -15,12 +14,18 @@
   const padding = { top: 50, right: 10, bottom: 40, left: 45 };
 
   // define data-space to view-space transformation
+  $: xMin = Math.min(...data.map((i) => i[xAttr]));
+  $: xMax = Math.max(...data.map((i) => i[xAttr]));
+  $: yMin = Math.min(...data.map((i) => i[yAttr]));
+  $: yMax = Math.max(...data.map((i) => i[yAttr]));
+
+  let viewPadding = 0.05;
   $: xScale = scaleLinear(
-    [Math.min(...data.map((i) => i[xAttr])), Math.max(...data.map(i => i[xAttr]))],
+    [xMin - viewPadding*(xMax-xMin), xMax + viewPadding*(xMax-xMin)],
     [padding.left, width-padding.right]
   )
   $: yScale = scaleLinear(
-    [Math.min(...data.map(i => i[yAttr])), Math.max(...data.map(i => i[yAttr]))],
+    [yMin - viewPadding*(yMax-yMin), yMax + viewPadding*(yMax-yMin)],
     [height-padding.bottom, padding.top]
   )
 
@@ -52,15 +57,11 @@
   </svg>
 </div>
 
-<button on:click={changeData}>Change Data!!!</button>
-
 <style>	
 	.chart {
 		width: 100%;
-		max-width: 640px;
-		height: calc(30vh);
-		min-height: 280px;
-		margin: 0 auto;
+		height: 30vh;
+		min-height: 300px;
 	}
 
   svg {
