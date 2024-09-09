@@ -2,6 +2,7 @@
   import Coords from "./Coords.svelte";
   import { onMount } from 'svelte';
   import { scaleLinear } from "d3-scale";
+  import Tooltip from "./Tooltip.svelte";
 
   export let data;
   export let xAttr;
@@ -12,6 +13,8 @@
   let width = 300;
   let height = 150;
   const padding = { top: 50, right: 10, bottom: 40, left: 45 };
+
+  let hoveredData;
 
   // define data-space to view-space transformation
   $: xMin = Math.min(...data.map((i) => i[xAttr]));
@@ -28,7 +31,7 @@
     [yMin - viewPadding*(yMax-yMin), yMax + viewPadding*(yMax-yMin)],
     [height-padding.bottom, padding.top]
   )
-
+  
   // dynamic resize to available space
   function resize() {
     ({ width, height } = svg.getBoundingClientRect());
@@ -39,20 +42,28 @@
 <svelte:window on:resize={resize} />
 
 <div class="chart">
+  {#if hoveredData}
+    <Tooltip data={hoveredData} {xScale} {yScale} {xAttr} {yAttr} />
+  {/if}
   <svg bind:this={svg}>
     <!-- title -->
-    <text class="title" x={padding.left} y={padding.top*0.3}>
+    <text class=title x={padding.left} y={padding.top*0.3}>
       Scatterplot
     </text>
     <!-- subtitle -->
-    <text class="subtitle" x={padding.left} y={padding.top*0.7}>
+    <text class=subtitle x={padding.left} y={padding.top*0.7}>
       This is an example text giving more information about this scatterplot
     </text>
     <!-- coordinate system -->
     <Coords xLabel={xAttr} yLabel={xAttr} {xScale} {yScale} {width} {height}/>
     <!-- glyphs -->
-     {#each data as d, i}
-        <circle cx={xScale(d[xAttr])} cy={yScale(d[yAttr])} stroke="black" r="2.5"/>
+     {#each data as d}
+        <circle class=glyph cx={xScale(d[xAttr])} cy={yScale(d[yAttr])}  stroke=black 
+        r={hoveredData && hoveredData==d ? 7 : 4}
+        opacity={hoveredData ? hoveredData==d ? 1 : 0.5 : 1}
+        on:mouseenter={() => {hoveredData = d;}}
+        on:mouseleave={() => {hoveredData = null;}}
+        on:focus={() => {hoveredData = d;}} role=listitem/> <!-- accessability options-->
      {/each}
   </svg>
 </div>
@@ -62,6 +73,7 @@
 		width: 100%;
 		height: 30vh;
 		min-height: 300px;
+    position: relative;
 	}
 
   svg {
@@ -77,5 +89,9 @@
   .subtitle {
     font-size: medium;
     fill: gray;
+  }
+
+  .glyph {
+    transition: opacity 300ms ease, r 300ms ease, cx 200ms ease, cy 200ms ease;
   }
 </style>
